@@ -48,13 +48,12 @@ class OcrService
 
             // Construim promptul pentru Claude
             $prompt = "Analizează acest bon fiscal și extrage următoarele informații în format JSON:
-            - furnizor: numele companiei (S.C. ... S.R.L.)
-            - numar_bon: numărul bonului fiscal
-            - data_bon: data în format DD/MM/YYYY
-            - cantitate: cantitatea de motorină în litri (doar numărul)
-            - valoare: valoarea totală (doar numărul)
-
-            Răspunde doar cu JSON-ul, fără alte explicații.";
+                - furnizor: numele companiei (S.C. ... S.R.L.)
+                - numar_bon: numărul bonului fiscal
+                - data_bon: data în format DD/MM/YYYY
+                - cantitate_facturata: cantitatea de motorină în litri (al doilea număr din formatul 'preț x cantitate', de exemplu din '7,33 x 20.48' extrage 20.48)
+                
+                Răspunde doar cu JSON-ul, fără alte explicații.";
 
             // Apelăm Claude API
             $response = Anthropic::messages()->create([
@@ -101,8 +100,8 @@ class OcrService
                 'furnizor' => $extractedData['furnizor'] ?? '',
                 'numar_bon' => $extractedData['numar_bon'] ?? '',
                 'data_bon' => $extractedData['data_bon'] ?? null,
-                'cantitate' => $extractedData['cantitate'] ?? 0,
-                'valoare' => $extractedData['valoare'] ?? 0,
+                'cantitate_facturata' => $extractedData['cantitate_facturata'] ?? 0,
+                'cantitate_utilizata' => $extractedData['cantitate_facturata'] ?? 0, // Implicit aceeași cu cea facturată
                 'raw_data' => json_encode($response)
             ]);
 

@@ -6,6 +6,7 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use App\Models\Bon;
 use App\Services\OcrService;
+use Illuminate\Support\Facades\Log;
 
 class BonUpload extends Component
 {
@@ -15,6 +16,9 @@ class BonUpload extends Component
     public $message;
     public $rezultateOcr = null;
     public $processing = false;
+    public $showEdit = false;
+
+    protected $listeners = ['rezultatUpdated' => 'onRezultatUpdated'];
 
     public function save(OcrService $ocrService)
     {
@@ -34,11 +38,14 @@ class BonUpload extends Component
 
             // Procesăm OCR
             $this->rezultateOcr = $ocrService->process($bon);
+            Log::info('OCR Results:', ['rezultat' => $this->rezultateOcr]);
             
             $this->message = 'Bon încărcat și procesat cu succes!';
             $bon->update(['status' => 'completed']);
+            $this->showEdit = true;
             
         } catch (\Exception $e) {
+            Log::error('Error processing bon:', ['error' => $e->getMessage()]);
             $this->message = 'Eroare: ' . $e->getMessage();
             if (isset($bon)) {
                 $bon->update(['status' => 'error']);
@@ -46,6 +53,11 @@ class BonUpload extends Component
         }
 
         $this->processing = false;
+    }
+
+    public function onRezultatUpdated()
+    {
+        $this->message = 'Rezultatul a fost actualizat cu succes!';
     }
 
     public function render()

@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('rezultate_ocr', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('bon_id')->constrained('bons');
+            $table->foreignId('bon_id')->constrained('bonuri');
             $table->string('furnizor')->nullable();
             $table->string('numar_bon')->nullable();
             $table->date('data_bon')->nullable();

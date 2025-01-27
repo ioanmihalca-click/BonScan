@@ -6,24 +6,30 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('situatie_centralizatoares', function (Blueprint $table) {
+        Schema::create('situatii_centralizatoare', function (Blueprint $table) {
             $table->id();
-            $table->string('perioada');
-            $table->string('status')->default('draft');
+            $table->string('perioada'); // ex: '2024-Q1' sau '2024-01'
+            $table->string('status')->default('draft'); // draft, finalized
+            $table->json('metadata')->nullable(); // Pentru informații adiționale (ex: user, departament)
+            $table->timestamp('generated_at')->nullable();
+            $table->timestamp('finalized_at')->nullable();
+            $table->timestamps();
+        });
+
+        // Tabel pivot pentru relația multe-la-multe între situații și bonuri
+        Schema::create('situatie_bon', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('situatie_id')->constrained('situatii_centralizatoare')->onDelete('cascade');
+            $table->foreignId('bon_id')->constrained('bonuri')->onDelete('cascade');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('situatie_centralizatoares');
+        Schema::dropIfExists('situatie_bon');
+        Schema::dropIfExists('situatii_centralizatoare');
     }
 };

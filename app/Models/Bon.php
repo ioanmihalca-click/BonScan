@@ -3,14 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Bon extends Model
 {
-    use HasFactory;
-
-    protected $table = 'bons'; 
-
+    protected $table = 'bonuri';
+    
     protected $fillable = [
         'imagine_path',
         'status'

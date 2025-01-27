@@ -6,24 +6,18 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up()
     {
-        Schema::create('bons', function (Blueprint $table) {
+        Schema::create('bonuri', function (Blueprint $table) {
             $table->id();
             $table->string('imagine_path');
-            $table->string('status')->default('pending'); // pending, processing, completed, error
+            $table->string('status')->default('processing');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
-        Schema::dropIfExists('bons');
+        Schema::dropIfExists('bonuri');
     }
 };

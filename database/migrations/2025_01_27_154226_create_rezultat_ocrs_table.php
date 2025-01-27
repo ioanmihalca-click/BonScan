@@ -6,29 +6,24 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    public function up()
     {
-        Schema::create('rezultat_ocrs', function (Blueprint $table) {
+        Schema::create('rezultat_ocr', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('bon_id')->constrained();
+            $table->foreignId('bon_id')->constrained('bonuri')->onDelete('cascade');
             $table->string('furnizor');
             $table->string('numar_bon');
             $table->date('data_bon');
-            $table->decimal('cantitate', 10, 6);
-            $table->decimal('valoare', 10, 2);
-            $table->json('raw_data')->nullable(); // stocăm rezultatul brut OCR
+            $table->decimal('cantitate_facturata', 10, 2);
+            $table->decimal('cantitate_utilizata', 10, 2)->nullable();
+            $table->json('raw_data')->nullable();
+            $table->timestamp('verified_at')->nullable();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
-        Schema::dropIfExists('rezultat_ocrs');
+        Schema::dropIfExists('rezultat_ocr');
     }
 };
