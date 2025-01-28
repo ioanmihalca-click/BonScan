@@ -2,6 +2,7 @@
 
 use App\Livewire\BonUpload;
 use App\Models\RezultatOcr;
+use App\Livewire\ListaBonuri;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\SituatiiCentralizatoare;
 
@@ -12,3 +13,4 @@ Route::get('/bonuri/{rezultat}/edit', function (RezultatOcr $rezultat) {
 })->name('bonuri.edit');
 
 Route::get('/situatie-centralizatoare', SituatiiCentralizatoare::class)->name('situatie-centralizatoare');
+Route::get('/bonuri', ListaBonuri::class)->name('bonuri.index');

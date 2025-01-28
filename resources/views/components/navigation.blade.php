@@ -17,7 +17,7 @@
                     <a href="{{'situatie-centralizatoare'}}" wire:navigate class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:border-gray-300 hover:text-gray-700">
                         Situații
                     </a>
-                    <a href="#" wire:navigate class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:border-gray-300 hover:text-gray-700">
+                    <a href="{{'bonuri'}}" wire:navigate class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:border-gray-300 hover:text-gray-700">
                         Bonuri
                     </a>
                 </div>
