@@ -35,15 +35,21 @@ class SituatieCentralizatoare extends Model
     // Metodă pentru a genera situația pentru o anumită perioadă
     public static function generateForPeriod($perioada)
     {
-        // Perioada va fi în format "2024-T1", "2024-T2" sau "2024-T3"
+        // Validăm formatul perioadei
+        if (!preg_match('/^\d{4}-T[1-3]$/', $perioada)) {
+            throw new \InvalidArgumentException('Vă rugăm să selectați o perioadă validă din lista disponibilă (de exemplu: 2024 - Trimestrul 1)');
+        }
+
+        $parts = explode('-T', $perioada);
+        $year = $parts[0];
+        $trimester = $parts[1];
+
+        // Creăm situația
         $situatie = self::create([
             'perioada' => $perioada,
             'status' => 'draft',
             'generated_at' => now()
         ]);
-
-        // Extragem anul și trimestrul
-        [$year, $trimester] = explode('-T', $perioada);
 
         // Determinăm lunile pentru trimestrul respectiv
         switch ($trimester) {
@@ -59,6 +65,8 @@ class SituatieCentralizatoare extends Model
                 $startMonth = 9;
                 $endMonth = 12;
                 break;
+            default:
+                throw new \InvalidArgumentException('Trimestrul trebuie să fie între 1 și 3');
         }
 
         // Găsim toate bonurile din trimestrul respectiv
@@ -68,8 +76,10 @@ class SituatieCentralizatoare extends Model
                 ->whereMonth('data_bon', '<=', $endMonth);
         })->get();
 
-        // Atașăm bonurile la situație
-        $situatie->bonuri()->attach($bonuri->pluck('id'));
+        // Atașăm bonurile la situație doar dacă există
+        if ($bonuri->isNotEmpty()) {
+            $situatie->bonuri()->attach($bonuri->pluck('id'));
+        }
 
         return $situatie;
     }

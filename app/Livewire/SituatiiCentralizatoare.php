@@ -15,7 +15,14 @@ class SituatiiCentralizatoare extends Component
     
     public function mount()
     {
-        $this->perioada = Carbon::now()->format('Y-m');
+        // Calculăm trimestrul curent bazat pe luna curentă
+        $currentMonth = Carbon::now()->month;
+        $currentYear = Carbon::now()->year;
+        $trimester = ceil($currentMonth / 3);
+        
+        // Setăm perioada în formatul corect YYYY-TX
+        $this->perioada = $currentYear . '-T' . $trimester;
+        
         $this->loadSituatii();
     }
 
@@ -28,8 +35,21 @@ class SituatiiCentralizatoare extends Component
 
     public function genereazaSituatie()
     {
-        $this->situatieCurenta = SituatieCentralizatoare::generateForPeriod($this->perioada);
-        $this->loadSituatii();
+        try {
+            $this->situatieCurenta = SituatieCentralizatoare::generateForPeriod($this->perioada);
+            
+            if ($this->situatieCurenta->bonuri->isEmpty()) {
+                session()->flash('warning', 'Nu am găsit niciun bon fiscal în perioada selectată. Vă rugăm să verificați dacă ați scanat bonurile pentru această perioadă.');
+            } else {
+                session()->flash('success', 'Situația centralizatoare a fost creată cu succes și include toate bonurile din perioada selectată.');
+            }
+            
+            $this->loadSituatii();
+        } catch (\InvalidArgumentException $e) {
+            session()->flash('error', $e->getMessage());
+        } catch (\Exception $e) {
+            session()->flash('error', 'Ne pare rău, dar a apărut o problemă la generarea situației. Vă rugăm să încercați din nou sau să contactați administratorul dacă problema persistă.');
+        }
     }
 
     public function finalizeazaSituatie($situatieId)
