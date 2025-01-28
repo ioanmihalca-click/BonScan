@@ -11,13 +11,13 @@
                 
                 <!-- Primary Nav -->
                 <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-                    <a href="#" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900 border-b-2 border-indigo-500">
+                    <a href="/" wire:navigate class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900 border-b-2 border-indigo-500">
                         Dashboard
                     </a>
-                    <a href="#" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:border-gray-300 hover:text-gray-700">
+                    <a href="{{'situatie-centralizatoare'}}" wire:navigate class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:border-gray-300 hover:text-gray-700">
                         Situații
                     </a>
-                    <a href="#" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:border-gray-300 hover:text-gray-700">
+                    <a href="#" wire:navigate class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:border-gray-300 hover:text-gray-700">
                         Bonuri
                     </a>
                 </div>

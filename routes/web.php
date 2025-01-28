@@ -11,4 +11,4 @@ Route::get('/bonuri/{rezultat}/edit', function (RezultatOcr $rezultat) {
     return view('bonuri.edit', compact('rezultat'));
 })->name('bonuri.edit');
 
-Route::get('/situatie-centralizatoare', SituatiiCentralizatoare::class);
+Route::get('/situatie-centralizatoare', SituatiiCentralizatoare::class)->name('situatie-centralizatoare');

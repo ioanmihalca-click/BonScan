@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Bon;
 use Livewire\Component;
+use App\Models\RezultatOcr;
 use App\Services\OcrService;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Log;
@@ -18,8 +19,17 @@ class BonUpload extends Component
     public $rezultateOcr = null;
     public $processing = false;
     public $showEdit = false;
+    public $currentBonId = null;
 
     protected $listeners = ['rezultatUpdated' => 'onRezultatUpdated'];
+
+    public function mount()
+    {
+        if ($this->currentBonId) {
+            $this->rezultateOcr = RezultatOcr::where('bon_id', $this->currentBonId)->first();
+            $this->showEdit = true;
+        }
+    }
 
     public function save(OcrService $ocrService)
     {
@@ -39,6 +49,7 @@ class BonUpload extends Component
 
             // Procesăm OCR
             $this->rezultateOcr = $ocrService->process($bon);
+            $this->currentBonId = $bon->id;
             Log::info('OCR Results:', ['rezultat' => $this->rezultateOcr]);
 
             $this->message = 'Bon încărcat și procesat cu succes!';
@@ -58,14 +69,17 @@ class BonUpload extends Component
     public function onRezultatUpdated()
     {
         $this->message = 'Rezultatul a fost actualizat cu succes!';
+        // Reîncărcăm rezultatele după actualizare
+        if ($this->currentBonId) {
+            $this->rezultateOcr = RezultatOcr::where('bon_id', $this->currentBonId)->first();
+        }
     }
 
     public function updatedBon($value)
     {
-        // Se asigură că bonul este încărcat corect
         if ($value instanceof TemporaryUploadedFile) {
             $this->validate([
-                'bon' => 'image|max:2048' // validare pentru imagine, max 2MB
+                'bon' => 'image|max:2048'
             ]);
         }
     }
@@ -76,6 +90,7 @@ class BonUpload extends Component
             $this->bon = $file;
         }
     }
+
     public function render()
     {
         return view('livewire.bon-upload');
