@@ -3,8 +3,9 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use App\Models\SituatieCentralizatoare;
 use Illuminate\Support\Carbon;
+use App\Services\PdfExportService;
+use App\Models\SituatieCentralizatoare;
 
 class SituatiiCentralizatoare extends Component
 {
@@ -40,7 +41,18 @@ class SituatiiCentralizatoare extends Component
 
     public function exportPDF($situatieId)
     {
-        // TODO: Implementare export PDF
+        $situatie = SituatieCentralizatoare::findOrFail($situatieId);
+        $pdfService = app(PdfExportService::class);
+        
+        return response()->streamDownload(function() use ($pdfService, $situatie) {
+            echo $pdfService->generatePdf($situatie)->output();
+        }, 'situatie-' . $situatie->perioada . '.pdf');
+    }
+
+    public function manageBonuri($situatieId)
+    {
+        $this->situatieCurenta = SituatieCentralizatoare::find($situatieId);
+        $this->dispatch('showBonManagement', situatieId: $situatieId);
     }
 
     public function render()

@@ -29,22 +29,43 @@ class SituatieCentralizatoare extends Model
     public function bonuri()
     {
         return $this->belongsToMany(Bon::class, 'situatie_bon', 'situatie_id', 'bon_id')
-                    ->withTimestamps();
+            ->withTimestamps();
     }
 
     // Metodă pentru a genera situația pentru o anumită perioadă
     public static function generateForPeriod($perioada)
     {
+        // Perioada va fi în format "2024-T1", "2024-T2" sau "2024-T3"
         $situatie = self::create([
             'perioada' => $perioada,
             'status' => 'draft',
             'generated_at' => now()
         ]);
 
-        // Găsim toate bonurile din perioada respectivă
-        $bonuri = Bon::whereHas('rezultatOcr', function ($query) use ($perioada) {
-            // Presupunem că perioada este în format 'YYYY-MM'
-            $query->whereRaw("DATE_FORMAT(data_bon, '%Y-%m') = ?", [$perioada]);
+        // Extragem anul și trimestrul
+        [$year, $trimester] = explode('-T', $perioada);
+
+        // Determinăm lunile pentru trimestrul respectiv
+        switch ($trimester) {
+            case '1':
+                $startMonth = 1;
+                $endMonth = 4;
+                break;
+            case '2':
+                $startMonth = 5;
+                $endMonth = 8;
+                break;
+            case '3':
+                $startMonth = 9;
+                $endMonth = 12;
+                break;
+        }
+
+        // Găsim toate bonurile din trimestrul respectiv
+        $bonuri = Bon::whereHas('rezultatOcr', function ($query) use ($year, $startMonth, $endMonth) {
+            $query->whereYear('data_bon', $year)
+                ->whereMonth('data_bon', '>=', $startMonth)
+                ->whereMonth('data_bon', '<=', $endMonth);
         })->get();
 
         // Atașăm bonurile la situație
@@ -80,5 +101,23 @@ class SituatieCentralizatoare extends Model
         }
 
         return $totals;
+    }
+
+    public function setMetadata(array $data)
+    {
+        $this->metadata = array_merge($this->metadata ?? [], $data);
+        $this->save();
+    }
+
+    public function getDefaultMetadata()
+    {
+        return [
+            'nume_companie' => 'MIHALCA I. VASILE II',
+            'cui_cnp' => '34395231',
+            'id_apia' => 'RO008688644',
+            'localitate' => 'PETROVA',
+            'judet' => 'MARAMUREȘ',
+            'nume_prenume' => 'MIHALCA VASILE'
+        ];
     }
 }
