@@ -78,6 +78,8 @@
                                     class="text-blue-600 hover:text-blue-900">
                                     Export PDF
                                 </button>
+
+                                <livewire:situatie-metadata :situatieId="$situatie->id" :wire:key="'metadata-'.$situatie->id" />
                             </td>
                         </tr>
                     @endforeach

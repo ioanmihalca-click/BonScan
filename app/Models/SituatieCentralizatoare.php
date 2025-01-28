@@ -109,15 +109,4 @@ class SituatieCentralizatoare extends Model
         $this->save();
     }
 
-    public function getDefaultMetadata()
-    {
-        return [
-            'nume_companie' => 'MIHALCA I. VASILE II',
-            'cui_cnp' => '34395231',
-            'id_apia' => 'RO008688644',
-            'localitate' => 'PETROVA',
-            'judet' => 'MARAMUREȘ',
-            'nume_prenume' => 'MIHALCA VASILE'
-        ];
-    }
 }
