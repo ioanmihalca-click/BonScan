@@ -14,9 +14,9 @@ class BonUpload extends Component
 {
     use WithFileUploads;
 
-    public $bon;
+    public $bonuri = [];
     public $message;
-    public $rezultateOcr = null;
+    public $rezultateOcr = [];
     public $processing = false;
     public $showEdit = false;
     public $currentBonId = null;
@@ -34,33 +34,34 @@ class BonUpload extends Component
     public function save(OcrService $ocrService)
     {
         $this->validate([
-            'bon' => 'required|image|max:2048'
+            'bonuri.*' => 'required|image|max:2048'
         ]);
 
         try {
             $this->processing = true;
+            $this->rezultateOcr = [];
 
-            // Salvăm bonul
-            $path = $this->bon->store('bonuri', 'public');
-            $bon = Bon::create([
-                'imagine_path' => $path,
-                'status' => 'processing'
-            ]);
+            foreach ($this->bonuri as $bon) {
+                // Salvăm bonul
+                $path = $bon->store('bonuri', 'public');
+                $bonModel = Bon::create([
+                    'imagine_path' => $path,
+                    'status' => 'processing'
+                ]);
 
-            // Procesăm OCR
-            $this->rezultateOcr = $ocrService->process($bon);
-            $this->currentBonId = $bon->id;
-            Log::info('OCR Results:', ['rezultat' => $this->rezultateOcr]);
-
-            $this->message = 'Bon încărcat și procesat cu succes!';
-            $bon->update(['status' => 'completed']);
-            $this->showEdit = true;
-        } catch (\Exception $e) {
-            Log::error('Error processing bon:', ['error' => $e->getMessage()]);
-            $this->message = 'Eroare: ' . $e->getMessage();
-            if (isset($bon)) {
-                $bon->update(['status' => 'error']);
+                // Procesăm OCR
+                $rezultat = $ocrService->process($bonModel);
+                $this->rezultateOcr[] = $rezultat;
+                $bonModel->update(['status' => 'completed']);
             }
+
+            $this->message = count($this->bonuri) . ' bonuri au fost încărcate și procesate cu succes!';
+            $this->showEdit = true;
+            $this->bonuri = []; // Reset după procesare
+
+        } catch (\Exception $e) {
+            Log::error('Error processing bonuri:', ['error' => $e->getMessage()]);
+            $this->message = 'Eroare: ' . $e->getMessage();
         }
 
         $this->processing = false;
@@ -69,25 +70,17 @@ class BonUpload extends Component
     public function onRezultatUpdated()
     {
         $this->message = 'Rezultatul a fost actualizat cu succes!';
-        // Reîncărcăm rezultatele după actualizare
         if ($this->currentBonId) {
             $this->rezultateOcr = RezultatOcr::where('bon_id', $this->currentBonId)->first();
         }
     }
 
-    public function updatedBon($value)
+    public function updatedBonuri($value)
     {
-        if ($value instanceof TemporaryUploadedFile) {
+        if ($value) {
             $this->validate([
-                'bon' => 'image|max:2048'
+                'bonuri.*' => 'image|max:2048'
             ]);
-        }
-    }
-
-    public function uploadBon($file)
-    {
-        if ($file) {
-            $this->bon = $file;
         }
     }
 
