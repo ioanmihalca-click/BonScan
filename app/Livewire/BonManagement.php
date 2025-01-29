@@ -4,10 +4,11 @@ namespace App\Livewire;
 
 use App\Models\Bon;
 use Livewire\Component;
+use Livewire\Attributes\On;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use App\Models\SituatieCentralizatoare;
-use Livewire\Attributes\On;
 
 class BonManagement extends Component
 {
@@ -24,7 +25,8 @@ class BonManagement extends Component
 
     public function loadAvailableBonuri()
     {
-        $situatie = SituatieCentralizatoare::find($this->situatieId);
+        $situatie = SituatieCentralizatoare::where('user_id', Auth::id())
+            ->findOrFail($this->situatieId);
 
         // Extragem anul și trimestrul (e.g., "2024-T1")
         [$year, $trimester] = explode('-T', $situatie->perioada);
@@ -46,11 +48,12 @@ class BonManagement extends Component
         }
 
         // Găsim bonurile pentru trimestrul respectiv
-        $this->availableBonuri = Bon::whereHas('rezultatOcr', function ($query) use ($year, $startMonth, $endMonth) {
-            $query->whereYear('data_bon', $year)
-                ->whereMonth('data_bon', '>=', $startMonth)
-                ->whereMonth('data_bon', '<=', $endMonth);
-        })
+        $this->availableBonuri = Bon::where('user_id', Auth::id())
+            ->whereHas('rezultatOcr', function ($query) use ($year, $startMonth, $endMonth) {
+                $query->whereYear('data_bon', $year)
+                    ->whereMonth('data_bon', '>=', $startMonth)
+                    ->whereMonth('data_bon', '<=', $endMonth);
+            })
             ->with('rezultatOcr')
             ->get()
             ->map(function ($bon) use ($situatie) {
@@ -79,36 +82,38 @@ class BonManagement extends Component
     }
 
     public function toggleBon($bonId)
-    {
-        try {
-            $situatie = SituatieCentralizatoare::find($this->situatieId);
-            if (!$situatie) {
-                $this->dispatch('showMessage', type: 'error', message: 'Situația nu a fost găsită.');
-                return;
-            }
+{
+    try {
+        // Verificăm dacă situația aparține utilizatorului
+        $situatie = SituatieCentralizatoare::where('user_id', Auth::id())
+            ->findOrFail($this->situatieId);
 
-            // Găsim bonul în lista disponibilă
-            $bon = collect($this->availableBonuri)->firstWhere('id', $bonId);
-            if (!$bon) {
-                $this->dispatch('showMessage', type: 'error', message: 'Bonul nu a fost găsit.');
-                return;
-            }
+        // Verificăm dacă bonul aparține utilizatorului
+        $bon = Bon::where('user_id', Auth::id())
+            ->findOrFail($bonId);
 
-            if ($bon['is_selected']) {
-                $situatie->bonuri()->detach($bonId);
-                $this->dispatch('showMessage', type: 'success', message: 'Bonul a fost eliminat din situație.');
-            } else {
-                $situatie->bonuri()->attach($bonId);
-                $this->dispatch('showMessage', type: 'success', message: 'Bonul a fost adăugat la situație.');
-            }
-
-            $this->loadAvailableBonuri();
-            $this->dispatch('bonuri-actualizate')->to('situatii-centralizatoare');
-        } catch (\Exception $e) {
-            Log::error('Eroare la toggle bon: ' . $e->getMessage());
-            $this->dispatch('showMessage', type: 'error', message: 'A apărut o eroare la procesarea bonului.');
+        // Găsim bonul în lista disponibilă pentru a verifica statusul
+        $bonInLista = collect($this->availableBonuri)->firstWhere('id', $bonId);
+        if (!$bonInLista) {
+            $this->dispatch('showMessage', type: 'error', message: 'Bonul nu a fost găsit în lista disponibilă.');
+            return;
         }
+
+        if ($bonInLista['is_selected']) {
+            $situatie->bonuri()->detach($bonId);
+            $this->dispatch('showMessage', type: 'success', message: 'Bonul a fost eliminat din situație.');
+        } else {
+            $situatie->bonuri()->attach($bonId);
+            $this->dispatch('showMessage', type: 'success', message: 'Bonul a fost adăugat la situație.');
+        }
+
+        $this->loadAvailableBonuri();
+        $this->dispatch('bonuri-actualizate')->to('situatii-centralizatoare');
+    } catch (\Exception $e) {
+        Log::error('Eroare la toggle bon: ' . $e->getMessage());
+        $this->dispatch('showMessage', type: 'error', message: 'A apărut o eroare la procesarea bonului.');
     }
+}
 
     public function adaugaToateBonurile()
     {
@@ -120,12 +125,12 @@ class BonManagement extends Component
             }
 
             $bonuriDeAdaugat = collect($this->availableBonuri)
-                ->filter(function($bon) {
+                ->filter(function ($bon) {
                     return !$bon['is_selected'];
                 })
                 ->pluck('id')
                 ->toArray();
-            
+
             if (empty($bonuriDeAdaugat)) {
                 $this->dispatch('showMessage', type: 'info', message: 'Toate bonurile sunt deja adăugate la situație.');
                 return;
@@ -133,7 +138,7 @@ class BonManagement extends Component
 
             $situatie->bonuri()->attach($bonuriDeAdaugat);
             $this->loadAvailableBonuri();
-            
+
             $this->dispatch('showMessage', type: 'success', message: count($bonuriDeAdaugat) . ' bonuri au fost adăugate cu succes.');
             $this->dispatch('bonuri-actualizate')->to('situatii-centralizatoare');
         } catch (\Exception $e) {

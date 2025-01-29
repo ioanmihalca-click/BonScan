@@ -8,6 +8,7 @@ use App\Models\RezultatOcr;
 use App\Services\OcrService;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class BonUpload extends Component
@@ -36,17 +37,18 @@ class BonUpload extends Component
         $this->validate([
             'bonuri.*' => 'required|image|max:2048'
         ]);
-
+    
         try {
             $this->processing = true;
             $this->rezultateOcr = [];
-
+    
             foreach ($this->bonuri as $bon) {
-                // Salvăm bonul
+                // Salvăm bonul cu user_id
                 $path = $bon->store('bonuri', 'public');
                 $bonModel = Bon::create([
                     'imagine_path' => $path,
-                    'status' => 'processing'
+                    'status' => 'processing',
+                    'user_id' => Auth::id()
                 ]);
 
                 // Procesăm OCR

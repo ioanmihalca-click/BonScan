@@ -45,4 +45,14 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function bonuri()
+    {
+        return $this->hasMany(Bon::class);
+    }
+
+    public function situatii()
+    {
+        return $this->hasMany(SituatieCentralizatoare::class);
+    }
 }

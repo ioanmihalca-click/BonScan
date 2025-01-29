@@ -3,11 +3,12 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Log;
-use App\Services\PdfExportService;
-use App\Models\SituatieCentralizatoare;
 use Livewire\Attributes\On;
+use Illuminate\Support\Carbon;
+use App\Services\PdfExportService;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use App\Models\SituatieCentralizatoare;
 
 class SituatiiCentralizatoare extends Component
 {
@@ -39,6 +40,7 @@ class SituatiiCentralizatoare extends Component
     {
         try {
             $this->situatii = SituatieCentralizatoare::with(['bonuri', 'bonuri.rezultatOcr'])
+                ->where('user_id', Auth::id())
                 ->orderBy('created_at', 'desc')
                 ->take(10)
                 ->get();
@@ -58,17 +60,21 @@ class SituatiiCentralizatoare extends Component
     public function genereazaSituatie()
     {
         $this->isProcessing = true;
-
+    
         try {
-            // Verificăm dacă există deja o situație pentru această perioadă
-            $existingSituatie = SituatieCentralizatoare::where('perioada', $this->perioada)->first();
+            // Verificăm dacă există deja o situație pentru această perioadă pentru utilizatorul curent
+            $existingSituatie = SituatieCentralizatoare::where('perioada', $this->perioada)
+                ->where('user_id', Auth::id())
+                ->first();
+    
             if ($existingSituatie) {
                 session()->put('warning', 'Există deja o situație pentru perioada selectată.');
                 $this->isProcessing = false;
                 return;
             }
-
-            $situatie = SituatieCentralizatoare::generateForPeriod($this->perioada);
+    
+            // Generăm situația centralizatoare
+            $situatie = SituatieCentralizatoare::generateForPeriod($this->perioada, Auth::id());
             
             if ($situatie->bonuri->isEmpty()) {
                 // Ștergem situația goală
@@ -111,7 +117,9 @@ class SituatiiCentralizatoare extends Component
 
     public function exportPDF($situatieId)
     {
-        $situatie = SituatieCentralizatoare::findOrFail($situatieId);
+        $situatie = SituatieCentralizatoare::where('user_id', Auth::id())
+            ->findOrFail($situatieId);
+            
         $pdfService = app(PdfExportService::class);
 
         return response()->streamDownload(function () use ($pdfService, $situatie) {

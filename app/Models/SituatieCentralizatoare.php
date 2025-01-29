@@ -16,7 +16,8 @@ class SituatieCentralizatoare extends Model
         'status',
         'metadata',
         'generated_at',
-        'finalized_at'
+        'finalized_at',
+        'user_id'
     ];
 
     protected $casts = [
@@ -24,6 +25,13 @@ class SituatieCentralizatoare extends Model
         'generated_at' => 'datetime',
         'finalized_at' => 'datetime'
     ];
+
+    // Relație multe-la-unu cu utilizatorul care a generat situația
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 
     // Relație multe-la-multe cu bonurile
     public function bonuri()
@@ -33,22 +41,23 @@ class SituatieCentralizatoare extends Model
     }
 
     // Metodă pentru a genera situația pentru o anumită perioadă
-    public static function generateForPeriod($perioada)
+    public static function generateForPeriod($perioada, $userId)
     {
         // Validăm formatul perioadei
         if (!preg_match('/^\d{4}-T[1-3]$/', $perioada)) {
-            throw new \InvalidArgumentException('Vă rugăm să selectați o perioadă validă din lista disponibilă (de exemplu: 2024 - Trimestrul 1)');
+            throw new \InvalidArgumentException('Vă rugăm să selectați o perioadă validă.');
         }
 
         $parts = explode('-T', $perioada);
         $year = $parts[0];
         $trimester = $parts[1];
 
-        // Creăm situația
+        // Creăm situația cu user_id
         $situatie = self::create([
             'perioada' => $perioada,
             'status' => 'draft',
-            'generated_at' => now()
+            'generated_at' => now(),
+            'user_id' => $userId
         ]);
 
         // Determinăm lunile pentru trimestrul respectiv
@@ -69,12 +78,13 @@ class SituatieCentralizatoare extends Model
                 throw new \InvalidArgumentException('Trimestrul trebuie să fie între 1 și 3');
         }
 
-        // Găsim toate bonurile din trimestrul respectiv
-        $bonuri = Bon::whereHas('rezultatOcr', function ($query) use ($year, $startMonth, $endMonth) {
-            $query->whereYear('data_bon', $year)
-                ->whereMonth('data_bon', '>=', $startMonth)
-                ->whereMonth('data_bon', '<=', $endMonth);
-        })->get();
+        // Găsim toate bonurile utilizatorului din trimestrul respectiv
+        $bonuri = Bon::where('user_id', $userId)
+            ->whereHas('rezultatOcr', function ($query) use ($year, $startMonth, $endMonth) {
+                $query->whereYear('data_bon', $year)
+                    ->whereMonth('data_bon', '>=', $startMonth)
+                    ->whereMonth('data_bon', '<=', $endMonth);
+            })->get();
 
         // Atașăm bonurile la situație doar dacă există
         if ($bonuri->isNotEmpty()) {
@@ -118,5 +128,4 @@ class SituatieCentralizatoare extends Model
         $this->metadata = array_merge($this->metadata ?? [], $data);
         $this->save();
     }
-
 }

@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Bon;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\Auth;
 
 class ListaBonuri extends Component
 {
@@ -22,12 +23,13 @@ class ListaBonuri extends Component
         $this->showDeleteModal = true;
     }
 
+
     public function deleteBon()
     {
-        $bon = Bon::find($this->selectedBonId);
-        if ($bon) {
-            $bon->delete();
-        }
+        $bon = Bon::where('user_id', Auth::id())
+            ->findOrFail($this->selectedBonId);
+
+        $bon->delete();
         $this->showDeleteModal = false;
         session()->flash('message', 'Bonul a fost șters cu succes.');
     }
@@ -42,8 +44,9 @@ class ListaBonuri extends Component
     {
         return view('livewire.lista-bonuri', [
             'bonuri' => Bon::with('rezultatOcr')
-                          ->latest()
-                          ->paginate(10)
+                ->where('user_id', Auth::id())
+                ->latest()
+                ->paginate(10)
         ]);
     }
 }
