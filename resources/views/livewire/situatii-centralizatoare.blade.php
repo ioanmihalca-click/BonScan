@@ -102,6 +102,10 @@
                         @endforeach
                     </select>
 
+                    <livewire:situatie-metadata :situatieId="1" 
+                        :wire:key="'metadata-header'"
+                        :showBonManagement="false">
+
                     <button wire:click="genereazaSituatie"
                         wire:loading.attr="disabled"
                         @if($isProcessing) disabled @endif
@@ -189,8 +193,6 @@
                                         </button>
                                         <button wire:click="exportPDF({{ $situatie->id }})"
                                             class="text-blue-600 hover:text-blue-900">Export</button>
-                                        <livewire:situatie-metadata :situatieId="$situatie->id" 
-                                            :wire:key="'metadata-'.$situatie->id">
                                     </div>
                                 </td>
                             </tr>
@@ -260,8 +262,6 @@
                                 </svg>
                                 Export
                             </button>
-
-                            <livewire:situatie-metadata :situatieId="$situatie->id" :wire:key="'metadata-'.$situatie->id">
                         </div>
                     </div>
                 @endforeach
