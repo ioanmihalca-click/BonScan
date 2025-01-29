@@ -84,10 +84,10 @@ new class extends Component
                             {{ __('Profil') }}
                         </x-dropdown-link>
 
-                        <!-- Authentication -->
+                         <!-- Authentication -->
                         <button wire:click="logout" class="w-full text-start">
                             <x-dropdown-link>
-                                {{ __('Deconectare') }}
+                                {{ __('Log Out') }}
                             </x-dropdown-link>
                         </button>
                     </x-slot>
@@ -140,11 +140,12 @@ new class extends Component
                         {{ __('Profil') }}
                     </x-responsive-nav-link>
 
-                    <button wire:click="logout" class="w-full text-start">
-                        <x-responsive-nav-link>
-                            {{ __('Deconectare') }}
-                        </x-responsive-nav-link>
-                    </button>
+                      <!-- Authentication -->
+                <button wire:click="logout" class="w-full text-start">
+                    <x-responsive-nav-link>
+                        {{ __('Log Out') }}
+                    </x-responsive-nav-link>
+                </button>
                 </div>
             </div>
         </div>
