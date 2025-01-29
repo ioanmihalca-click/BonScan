@@ -7,6 +7,7 @@ use Livewire\Component;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use App\Models\SituatieCentralizatoare;
+use Livewire\Attributes\On;
 
 class BonManagement extends Component
 {
@@ -65,29 +66,80 @@ class BonManagement extends Component
             ->toArray();
     }
 
+    #[On('bon-management-toggle')]
+    public function handleBonManagementToggle()
+    {
+        $this->loadAvailableBonuri();
+    }
+
+    #[On('situatie-actualizata')]
+    public function handleSituatieActualizata()
+    {
+        $this->loadAvailableBonuri();
+    }
+
     public function toggleBon($bonId)
     {
-        $situatie = SituatieCentralizatoare::find($this->situatieId);
+        try {
+            $situatie = SituatieCentralizatoare::find($this->situatieId);
+            if (!$situatie) {
+                $this->dispatch('showMessage', type: 'error', message: 'Situația nu a fost găsită.');
+                return;
+            }
 
-        if (in_array($bonId, $this->selectedBonuri)) {
-            // Dacă bonul e deja selectat, îl eliminăm
-            $situatie->bonuri()->detach($bonId);
-            $this->selectedBonuri = array_diff($this->selectedBonuri, [$bonId]);
-        } else {
-            // Dacă bonul nu e selectat, îl adăugăm
-            $situatie->bonuri()->attach($bonId);
-            $this->selectedBonuri[] = $bonId;
+            // Găsim bonul în lista disponibilă
+            $bon = collect($this->availableBonuri)->firstWhere('id', $bonId);
+            if (!$bon) {
+                $this->dispatch('showMessage', type: 'error', message: 'Bonul nu a fost găsit.');
+                return;
+            }
+
+            if ($bon['is_selected']) {
+                $situatie->bonuri()->detach($bonId);
+                $this->dispatch('showMessage', type: 'success', message: 'Bonul a fost eliminat din situație.');
+            } else {
+                $situatie->bonuri()->attach($bonId);
+                $this->dispatch('showMessage', type: 'success', message: 'Bonul a fost adăugat la situație.');
+            }
+
+            $this->loadAvailableBonuri();
+            $this->dispatch('bonuri-actualizate')->to('situatii-centralizatoare');
+        } catch (\Exception $e) {
+            Log::error('Eroare la toggle bon: ' . $e->getMessage());
+            $this->dispatch('showMessage', type: 'error', message: 'A apărut o eroare la procesarea bonului.');
         }
-
-        $this->loadAvailableBonuri();
     }
 
     public function adaugaToateBonurile()
     {
-        $situatie = SituatieCentralizatoare::find($this->situatieId);
-        $bonIds = collect($this->availableBonuri)->pluck('id');
-        $situatie->bonuri()->syncWithoutDetaching($bonIds);
-        $this->loadAvailableBonuri();
+        try {
+            $situatie = SituatieCentralizatoare::find($this->situatieId);
+            if (!$situatie) {
+                $this->dispatch('showMessage', type: 'error', message: 'Situația nu a fost găsită.');
+                return;
+            }
+
+            $bonuriDeAdaugat = collect($this->availableBonuri)
+                ->filter(function($bon) {
+                    return !$bon['is_selected'];
+                })
+                ->pluck('id')
+                ->toArray();
+            
+            if (empty($bonuriDeAdaugat)) {
+                $this->dispatch('showMessage', type: 'info', message: 'Toate bonurile sunt deja adăugate la situație.');
+                return;
+            }
+
+            $situatie->bonuri()->attach($bonuriDeAdaugat);
+            $this->loadAvailableBonuri();
+            
+            $this->dispatch('showMessage', type: 'success', message: count($bonuriDeAdaugat) . ' bonuri au fost adăugate cu succes.');
+            $this->dispatch('bonuri-actualizate')->to('situatii-centralizatoare');
+        } catch (\Exception $e) {
+            Log::error('Eroare la adăugarea tuturor bonurilor: ' . $e->getMessage());
+            $this->dispatch('showMessage', type: 'error', message: 'A apărut o eroare la adăugarea bonurilor.');
+        }
     }
 
     public function render()
