@@ -80,12 +80,21 @@
 
     <!-- Header cu Stats -->
     <div class="bg-white rounded-lg shadow">
-        <div class="px-4 py-4 border-b border-gray-200 md:px-6 md:py-5">
-            <div class="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
-                <div>
-                    <h2 class="text-lg font-semibold text-gray-900 md:text-xl">Situații Centralizatoare</h2>
-                    <p class="mt-1 text-sm text-gray-500">Gestionează situațiile centralizatoare pentru subvenția de motorină</p>
+    <div class="px-4 py-4 border-b border-gray-200 md:px-6 md:py-5">
+        <div class="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
+            <div>
+                <h2 class="text-lg font-semibold text-gray-900 md:text-xl">Situații Centralizatoare</h2>
+                <p class="mt-1 text-sm text-gray-500">Gestionează situațiile centralizatoare pentru subvenția de motorină</p>
+                
+                <!-- Mesaj informativ permanent -->
+                <div class="flex items-center p-2 mt-2 text-sm text-blue-700 rounded-md bg-blue-50">
+                    <svg class="flex-shrink-0 w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>Nu uita să editezi datele firmei înainte să generezi situația.</span>
                 </div>
+            </div>
                 <div class="flex flex-col items-stretch space-y-3 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-4">
                     <select wire:model="perioada"
                         class="w-full py-2 pl-3 pr-10 text-base border-gray-300 rounded-md sm:w-64 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">

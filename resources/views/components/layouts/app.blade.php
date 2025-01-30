@@ -19,7 +19,7 @@
 <body class="font-sans antialiased bg-gray-50">
     <div class="min-h-screen">
         <!-- Navigation -->
-        <x-navigation />
+        <livewire:layout.navigation />
 
         <!-- Page Content -->
         <main class="py-6">
