@@ -1,104 +1,111 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>BonScan - Centralizator Motorină</title>
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="font-sans antialiased">
-        <div class="bg-gray-50 text-black/50">
-            <div class="relative flex flex-col items-center justify-center min-h-screen selection:bg-indigo-500 selection:text-white">
-                <div class="relative w-full max-w-2xl px-6 lg:max-w-7xl">
-                    <header class="grid items-center grid-cols-2 gap-2 py-10 lg:grid-cols-3">
-                        <div class="flex lg:justify-center lg:col-start-2">
-                            <span class="text-3xl font-bold text-indigo-600">BonScan</span>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BonScan - Centralizator Motorină</title>
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+
+<body class="font-sans antialiased">
+    <div class="bg-gray-50 text-black/50">
+        <div
+            class="relative flex flex-col items-center justify-center min-h-screen selection:bg-indigo-500 selection:text-white">
+            <div class="relative w-full max-w-2xl px-6 lg:max-w-7xl">
+
+
+                <main class="mt-1">
+                    <div class="flex flex-col items-center justify-center px-6 py-12 text-center">
+                        <h1 class="text-3xl font-bold text-gray-900 sm:text-4xl md:text-5xl lg:text-6xl">
+                            <span class="block">Automatizează Procesul de</span>
+                            <span class="block text-indigo-600">Subvenții pentru Motorină</span>
+                        </h1>
+
+                        <p class="max-w-xl mx-auto mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg md:mt-5 md:text-xl">
+                            Simplifică procesul de gestionare a bonurilor fiscale și generare a situațiilor
+                            centralizatoare pentru APIA.
+                        </p>
+
+
+                        <div class="flex flex-col justify-center gap-4 mt-8 sm:flex-row">
+                            <a href="{{ route('register') }}"
+                                class="inline-flex items-center justify-center w-full px-6 py-3 text-base font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm sm:w-auto hover:bg-indigo-700">
+                                Începe Gratuit
+                            </a>
+                            <a href="{{ route('login') }}"
+                                class="inline-flex items-center justify-center w-full px-6 py-3 text-base font-medium text-indigo-600 bg-white border border-indigo-600 rounded-md shadow-sm sm:w-auto hover:bg-indigo-50">
+                                Ai deja cont? Autentifică-te
+                            </a>
+                            <a href="#demo"
+                                class="inline-flex items-center justify-center w-full px-6 py-3 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm sm:w-auto hover:bg-gray-50">
+                                Vezi Demo
+                            </a>
                         </div>
-                        @if (Route::has('login'))
-                            <div class="flex justify-end">
-                                @auth
-                                    <a href="{{ route('dashboard') }}" class="font-semibold text-indigo-600 hover:text-indigo-500 focus:outline focus:outline-2 focus:rounded-sm focus:outline-indigo-500">Dashboard</a>
-                                @else
-                                    <a href="{{ route('login') }}" class="font-semibold text-indigo-600 hover:text-indigo-500 focus:outline focus:outline-2 focus:rounded-sm focus:outline-indigo-500">Autentificare</a>
-                                @endauth
+
+                        <div class="grid grid-cols-1 gap-4 mt-8 sm:grid-cols-3">
+                            <div class="p-4 text-center bg-white rounded-lg shadow-sm">
+                                <div class="text-3xl font-bold text-indigo-600">1000+</div>
+                                <div class="text-gray-500">Bonuri Procesate</div>
                             </div>
-                        @endif
-                    </header>
+                            <div class="p-4 text-center bg-white rounded-lg shadow-sm">
+                                <div class="text-3xl font-bold text-indigo-600">50+</div>
+                                <div class="text-gray-500">Ferme Mulțumite</div>
+                            </div>
+                            <div class="p-4 text-center bg-white rounded-lg shadow-sm">
+                                <div class="text-3xl font-bold text-indigo-600">100%</div>
+                                <div class="text-gray-500">Gratuit</div>
+                            </div>
+                        </div>
 
-                    <main class="mt-6">
-                        <div class="grid gap-6 lg:grid-cols-2 lg:gap-8">
-                            <!-- Left Column - Product Info -->
-                            <div class="flex flex-col items-start gap-6 p-6 overflow-hidden bg-white rounded-lg shadow-lg lg:p-10">
-                                <div class="pt-3 sm:pt-5">
-                                    <h1 class="text-3xl font-bold text-gray-900">Automatizează Procesul de Subvenții pentru Motorină</h1>
-
-                                    <p class="mt-4 text-lg text-gray-600">
-                                        Simplifică procesul de gestionare a bonurilor fiscale și generare a situațiilor centralizatoare pentru APIA.
-                                    </p>
-
-                                    <div class="mt-8 space-y-6">
-                                        <div class="flex items-start gap-3">
-                                            <div class="flex-shrink-0">
-                                                <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
-                                                </svg>
-                                            </div>
-                                            <div>
-                                                <h3 class="font-semibold text-gray-900">Scanare și OCR</h3>
-                                                <p class="text-gray-600">Procesare automată a bonurilor fiscale cu extragere de date</p>
-                                            </div>
-                                        </div>
-
-                                        <div class="flex items-start gap-3">
-                                            <div class="flex-shrink-0">
-                                                <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                                                </svg>
-                                            </div>
-                                            <div>
-                                                <h3 class="font-semibold text-gray-900">Organizare pe Trimestre</h3>
-                                                <p class="text-gray-600">Gestiune automată a situațiilor centralizatoare trimestriale</p>
-                                            </div>
-                                        </div>
-
-                                        <div class="flex items-start gap-3">
-                                            <div class="flex-shrink-0">
-                                                <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                                </svg>
-                                            </div>
-                                            <div>
-                                                <h3 class="font-semibold text-gray-900">Export PDF</h3>
-                                                <p class="text-gray-600">Generare automată a documentelor în formatul APIA</p>
-                                            </div>
-                                        </div>
-                                    </div>
+                        <div class="grid gap-8 mt-16 md:grid-cols-3 lg:gap-x-12">
+                            <div class="p-6 bg-white rounded-lg shadow-lg">
+                                <div class="inline-block p-3 text-indigo-600 bg-indigo-100 rounded-full">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                                    </svg>
                                 </div>
+                                <h3 class="mt-4 text-lg font-semibold text-gray-900">Fotografiază Bonurile</h3>
+                                <p class="mt-2 text-gray-600">Procesare automată a bonurilor fiscale cu extragere de
+                                    date</p>
                             </div>
 
-                            <!-- Right Column - Login Form -->
-                            {{-- <div class="flex items-center justify-center">
-                                <div class="w-full max-w-md">
-                                    <div class="px-4 py-8 bg-white rounded-lg shadow-2xl sm:px-10">
-                                        <div class="mb-6 sm:mx-auto sm:w-full sm:max-w-md">
-                                            <h2 class="text-2xl font-bold text-center text-gray-900">
-                                                Autentificare
-                                            </h2>
-                                        </div>
-                                        <livewire:login-form />
-                                    </div>
+                            <div class="p-6 bg-white rounded-lg shadow-lg">
+                                <div class="inline-block p-3 text-indigo-600 bg-indigo-100 rounded-full">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                    </svg>
                                 </div>
+                                <h3 class="mt-4 text-lg font-semibold text-gray-900">Organizare pe Trimestre</h3>
+                                <p class="mt-2 text-gray-600">Gestiune automată a situațiilor centralizatoare
+                                    trimestriale</p>
                             </div>
-                        </div> --}}
-                    </main>
 
-                    <footer class="py-16 text-sm text-center text-gray-600">
-                        &copy; {{ date('Y') }} BonScan. Toate drepturile rezervate.
-                    </footer>
-                </div>
+                            <div class="p-6 bg-white rounded-lg shadow-lg">
+                                <div class="inline-block p-3 text-indigo-600 bg-indigo-100 rounded-full">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                </div>
+                                <h3 class="mt-4 text-lg font-semibold text-gray-900">Export PDF</h3>
+                                <p class="mt-2 text-gray-600">Generare automată a documentelor în formatul APIA</p>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </main>
+
+                <x-footer />
+                
             </div>
         </div>
-    </body>
+    </div>
+</body>
+
 </html>

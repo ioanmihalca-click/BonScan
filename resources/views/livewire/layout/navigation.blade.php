@@ -33,10 +33,10 @@ new class extends Component {
                     </button>
                 </div>
 
-                <div class="flex items-center flex-shrink-0 ml-4 sm:ml-0">
-                    <span class="text-xl font-bold text-indigo-600">BonScan</span>
-                </div>
-
+          <div class="flex items-center flex-shrink-0 ml-4 sm:ml-0">
+    <img src="assets/logo.webp" alt="BonScan Logo" class="w-8 h-8 mr-2">
+    <span class="text-xl font-bold text-indigo-600">BonScan</span>
+</div>
                 <!-- Desktop Navigation -->
                 <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
                     <a href="/dashboard" wire:navigate @class([
