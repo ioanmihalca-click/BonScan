@@ -14,6 +14,20 @@
     <meta name="apple-mobile-web-app-title" content="BonScan">
     <link rel="manifest" href="{{ asset('assets/favicon/site.webmanifest') }}">
 
+       <!-- Open Graph / Social Media Meta Tags -->
+   <meta property="og:title" content="BonScan - Centralizator Motorină">
+   <meta property="og:description" content="Automatizează procesul de gestionare a bonurilor fiscale și generare a situațiilor centralizatoare pentru subvenția de motorină APIA.">
+   <meta property="og:image" content="{{ asset('assets/OG-Bon.jpg') }}">
+   <meta property="og:url" content="{{ url('/') }}">
+   <meta property="og:type" content="website">
+   <meta property="og:site_name" content="BonScan">
+
+   <!-- Twitter Card Meta Tags -->
+   <meta name="twitter:card" content="summary_large_image">
+   <meta name="twitter:title" content="BonScan - Centralizator Motorină">
+   <meta name="twitter:description" content="Automatizează procesul de gestionare a bonurilor fiscale și generare a situațiilor centralizatoare pentru subvenția de motorină APIA.">
+   <meta name="twitter:image" content="{{ asset('assets/OG-Bon.jpg') }}">
+
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
