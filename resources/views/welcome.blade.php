@@ -29,7 +29,7 @@
                 <main class="mt-1">
                     <div class="flex flex-col items-center justify-center px-6 py-12 text-center">
                         <h1 class="text-3xl font-bold text-gray-900 sm:text-4xl md:text-5xl lg:text-6xl">
-                            <span class="block">Automatizează test Procesul de</span>
+                            <span class="block">Automatizează Procesul de</span>
                             <span class="block text-indigo-600">Subvenții pentru Motorină</span>
                         </h1>
 
