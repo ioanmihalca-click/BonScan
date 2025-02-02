@@ -11,10 +11,8 @@ return new class extends Migration
         Schema::create('situatii_centralizatoare', function (Blueprint $table) {
             $table->id();
             $table->string('perioada'); // ex: '2024-Q1' sau '2024-01'
-            $table->string('status')->default('draft'); // draft, finalized
             $table->json('metadata')->nullable(); // Pentru informații adiționale (ex: user, departament)
             $table->timestamp('generated_at')->nullable();
-            $table->timestamp('finalized_at')->nullable();
             $table->timestamps();
         });
 

@@ -13,17 +13,14 @@ class SituatieCentralizatoare extends Model
 
     protected $fillable = [
         'perioada',
-        'status',
         'metadata',
         'generated_at',
-        'finalized_at',
         'user_id'
     ];
 
     protected $casts = [
         'metadata' => 'array',
-        'generated_at' => 'datetime',
-        'finalized_at' => 'datetime'
+        'generated_at' => 'datetime'
     ];
 
     // Relație multe-la-unu cu utilizatorul care a generat situația
@@ -47,18 +44,25 @@ class SituatieCentralizatoare extends Model
         if (!preg_match('/^\d{4}-T[1-3]$/', $perioada)) {
             throw new \InvalidArgumentException('Vă rugăm să selectați o perioadă validă.');
         }
-
+    
         $parts = explode('-T', $perioada);
         $year = $parts[0];
         $trimester = $parts[1];
-
-        // Creăm situația cu user_id
+    
+        // Preluăm metadata de la ultima situație
+        $lastSituatie = self::where('user_id', $userId)
+            ->whereNotNull('metadata')
+            ->latest()
+            ->first();
+    
+        // Creăm situația cu user_id și metadata
         $situatie = self::create([
             'perioada' => $perioada,
-            'status' => 'draft',
             'generated_at' => now(),
-            'user_id' => $userId
+            'user_id' => $userId,
+            'metadata' => $lastSituatie ? $lastSituatie->metadata : null // Copiem metadata
         ]);
+
 
         // Determinăm lunile pentru trimestrul respectiv
         switch ($trimester) {
@@ -92,15 +96,6 @@ class SituatieCentralizatoare extends Model
         }
 
         return $situatie;
-    }
-
-    // Metodă pentru a finaliza situația
-    public function finalize()
-    {
-        $this->update([
-            'status' => 'finalized',
-            'finalized_at' => now()
-        ]);
     }
 
     // Metodă pentru a obține totalurile

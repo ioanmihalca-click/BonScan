@@ -60,37 +60,36 @@ class SituatiiCentralizatoare extends Component
     public function genereazaSituatie()
     {
         $this->isProcessing = true;
-    
+
         try {
             // Verificăm dacă există deja o situație pentru această perioadă pentru utilizatorul curent
             $existingSituatie = SituatieCentralizatoare::where('perioada', $this->perioada)
                 ->where('user_id', Auth::id())
                 ->first();
-    
+
             if ($existingSituatie) {
                 session()->put('warning', 'Există deja o situație pentru perioada selectată.');
                 $this->isProcessing = false;
                 return;
             }
-    
+
             // Generăm situația centralizatoare
             $situatie = SituatieCentralizatoare::generateForPeriod($this->perioada, Auth::id());
-            
+
             if ($situatie->bonuri->isEmpty()) {
                 // Ștergem situația goală
                 $situatie->delete();
-                
+
                 // Notificare utilizator
                 session()->put('warning', 'Nu am găsit niciun bon fiscal în perioada selectată.');
             } else {
-                session()->put('success', 'Situația centralizatoare a fost creată cu succes și include ' . 
+                session()->put('success', 'Situația centralizatoare a fost creată cu succes și include ' .
                     $situatie->bonuri->count() . ' bonuri.');
             }
 
-            // Reset stare și reîncărcare indiferent de rezultat
+            // Reset stare și reîncărcare
             $this->reset(['situatieCurenta', 'showBonManagement']);
             $this->loadSituatii();
-            
         } catch (\InvalidArgumentException $e) {
             session()->put('error', $e->getMessage());
         } catch (\Exception $e) {
@@ -102,24 +101,11 @@ class SituatiiCentralizatoare extends Component
         }
     }
 
-    public function finalizeazaSituatie($situatieId)
-    {
-        try {
-            $situatie = SituatieCentralizatoare::findOrFail($situatieId);
-            $situatie->finalize();
-            $this->loadSituatii();
-            session()->put('success', 'Situația a fost finalizată cu succes.');
-            $this->dispatch('situatie-actualizata');
-        } catch (\Exception $e) {
-            session()->put('error', 'A apărut o eroare la finalizarea situației.');
-        }
-    }
-
     public function exportPDF($situatieId)
     {
         $situatie = SituatieCentralizatoare::where('user_id', Auth::id())
             ->findOrFail($situatieId);
-            
+
         $pdfService = app(PdfExportService::class);
 
         return response()->streamDownload(function () use ($pdfService, $situatie) {

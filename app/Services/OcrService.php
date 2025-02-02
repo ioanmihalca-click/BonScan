@@ -45,7 +45,7 @@ class OcrService
             
             // Convertim imaginea în base64
             $imageBase64 = base64_encode(file_get_contents($optimizedImagePath));
-
+    
             // Construim promptul pentru Claude
             $prompt = "Analizează acest bon fiscal și extrage următoarele informații în format JSON:
                 - furnizor: numele companiei (S.C. ... S.R.L.)
@@ -54,40 +54,42 @@ class OcrService
                 - cantitate_facturata: cantitatea de motorină în litri (al doilea număr din formatul 'preț x cantitate', de exemplu din '7,33 x 20.48' extrage 20.48)
                 
                 Răspunde doar cu JSON-ul, fără alte explicații.";
-
-            // Apelăm Claude API
+    
             $response = Anthropic::messages()->create([
                 'model' => 'claude-3-5-sonnet-20241022',
                 'max_tokens' => 1024,
+                'system' => 'You are a helpful assistant that analyzes receipts.',
                 'messages' => [
-                    ['role' => 'user', 'content' => [
-                        ['type' => 'text', 'text' => $prompt],
-                        ['type' => 'image', 'source' => [
-                            'type' => 'base64',
-                            'media_type' => 'image/jpeg',
-                            'data' => $imageBase64
-                        ]]
-                    ]]
+                    [
+                        'role' => 'user',
+                        'content' => [
+                            ['type' => 'text', 'text' => $prompt],
+                            ['type' => 'image', 'source' => [
+                                'type' => 'base64',
+                                'media_type' => 'image/jpeg',
+                                'data' => $imageBase64
+                            ]]
+                        ]
+                    ]
                 ]
             ]);
-
             // Ștergem fișierul temporar
             if (file_exists($optimizedImagePath)) {
                 unlink($optimizedImagePath);
             }
 
-            // Extragem JSON din răspuns
-            if (!isset($response->content[0]) || !isset($response->content[0]->text)) {
+            // Verificăm răspunsul și extragem conținutul
+            if (!$response || !isset($response['content'][0]['text'])) {
                 throw new \Exception('Răspuns invalid de la Claude API');
             }
-            
-            $content = $response->content[0]->text;
+
+            $content = $response['content'][0]['text'];
             $extractedData = json_decode($content, true);
             
             if (json_last_error() !== JSON_ERROR_NONE) {
                 throw new \Exception('Eroare la decodarea JSON: ' . json_last_error_msg());
             }
-            
+
             Log::info('Claude Response:', ['data' => $extractedData]);
 
             // Validăm și formatăm data
@@ -101,8 +103,8 @@ class OcrService
                 'numar_bon' => $extractedData['numar_bon'] ?? '',
                 'data_bon' => $extractedData['data_bon'] ?? null,
                 'cantitate_facturata' => $extractedData['cantitate_facturata'] ?? 0,
-                'cantitate_utilizata' => $extractedData['cantitate_facturata'] ?? 0, // Implicit aceeași cu cea facturată
-                'raw_data' => json_encode($response)
+                'cantitate_utilizata' => $extractedData['cantitate_facturata'] ?? 0,
+                'raw_data' => json_encode($extractedData)
             ]);
 
         } catch (\Exception $e) {
