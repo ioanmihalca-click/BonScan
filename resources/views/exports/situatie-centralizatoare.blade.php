@@ -108,12 +108,12 @@
     </div>
 
     <div class="company-info">
-        {{ $metadata['nume_companie'] ?? 'MIHALCA I. VASILE II' }}<br>
-        CUI/CNP {{ $metadata['cui_cnp'] ?? '34395231' }}<br>
-        ID APIA {{ $metadata['id_apia'] ?? 'RO008688644' }}<br>
+        {{ $metadata['nume_companie'] ?? 'NUME FIRMA' }}<br>
+        CUI/CNP {{ $metadata['cui_cnp'] ?? 'CUI FIRMA' }}<br>
+        ID APIA {{ $metadata['id_apia'] ?? 'ID APIA' }}<br>
         Sediul/Domiciliul<br>
-        Localitatea {{ $metadata['localitate'] ?? 'PETROVA' }}<br>
-        Județul {{ $metadata['judet'] ?? 'MARAMUREȘ' }}
+        Localitatea {{ $metadata['localitate'] ?? 'LOCALITATEA' }}<br>
+        Județul {{ $metadata['judet'] ?? 'JUDET' }}
     </div>
 
     <div class="title">SITUAȚIA CENTRALIZATOARE</div>
