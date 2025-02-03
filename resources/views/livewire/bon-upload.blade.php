@@ -16,7 +16,6 @@
                         <li>Evitați umbrele sau reflexiile pe bon</li>
                         <li>Încărcați maxim 10 bonuri odată pentru procesare optimă</li>
                         <li>Timpul de procesare variază între 10-30 secunde per bon</li>
-                        <li>Nu închideți fereastra în timpul procesării</li>
                     </ul>
                 </div>
             </div>
@@ -95,6 +94,59 @@
                         </span>
                     </button>
                 </div>
+
+                <!-- Progress Bar -->
+                @if ($totalJobs > 0 && !$processingComplete)
+                    <div class="p-4 mt-4 rounded-lg bg-gray-50">
+                        <div class="relative pt-1">
+                            <div class="flex items-center justify-between mb-2">
+                                <div>
+                                    <span class="inline-block text-xs font-semibold text-indigo-600">
+                                        Progres Procesare
+                                    </span>
+                                </div>
+                                <div class="text-right">
+                                    <span class="inline-block text-xs font-semibold text-indigo-600">
+                                        {{ $completedJobs }}/{{ $totalJobs }} bonuri procesate
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex h-2 mb-4 overflow-hidden text-xs bg-indigo-200 rounded">
+                                <div style="width:{{ ($completedJobs / $totalJobs) * 100 }}%"
+                                    class="flex flex-col justify-center text-center text-white transition-all duration-500 bg-indigo-500 shadow-none whitespace-nowrap">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+        </div>
+
+        <div class="space-y-6">
+      
+            @if (!empty($rezultateOcr))
+                <div class="p-4 mt-6 rounded-lg bg-gray-50">
+                    <h4 class="mb-3 text-sm font-medium text-gray-900">Status Procesare Bonuri</h4>
+                    <div class="space-y-2">
+                        @foreach ($rezultateOcr as $rezultat)
+                            <div class="flex items-center justify-between py-2 border-b border-gray-200 last:border-0">
+                                <span class="text-sm text-gray-600">Bon
+                                    #{{ $rezultat->numar_bon ?? 'În procesare' }}</span>
+                                <span
+                                    class="px-2 py-1 text-sm rounded-full 
+                                        {{ $rezultat->verified_at
+                                            ? 'bg-green-100 text-green-800'
+                                            : ($rezultat->error
+                                                ? 'bg-red-100 text-red-800'
+                                                : 'bg-yellow-100 text-yellow-800') }}">
+                                    {{ $rezultat->verified_at ? 'Procesat' : ($rezultat->error ? 'Eroare' : 'În procesare') }}
+                                </span>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
             </form>
         </div>
     </div>
@@ -106,4 +158,62 @@
             </div>
         @endforeach
     @endif
+
+<script>
+    document.addEventListener('livewire:initialized', () => {
+        let checkInterval;
+        let isChecking = false;
+
+        const startChecking = () => {
+            // Prevent multiple intervals
+            if (isChecking) return;
+            isChecking = true;
+
+            console.log('Starting processing check...'); // Debug log
+
+            // Clear any existing interval
+            if (checkInterval) {
+                clearInterval(checkInterval);
+            }
+
+            // Start a new interval
+            checkInterval = setInterval(() => {
+                console.log('Checking processing status...'); // Debug log
+                Livewire.dispatch('checkProcessingStatus');
+            }, 2000); // Check every 2 seconds
+
+            // Stop after 5 minutes or when processing is complete
+            setTimeout(() => {
+                if (checkInterval) {
+                    clearInterval(checkInterval);
+                    isChecking = false;
+                    console.log('Checking stopped after timeout'); // Debug log
+                }
+            }, 300000);
+        };
+
+        // Start checking when component signals
+        Livewire.on('startProcessingCheck', () => {
+            console.log('Received startProcessingCheck event'); // Debug log
+            startChecking();
+        });
+
+        // Check on component load if needed
+        window.addEventListener('load', () => {
+            if (document.querySelector('[wire\\:id]')) {
+                startChecking();
+            }
+        });
+
+        // Listen for processing complete
+        Livewire.on('processingComplete', () => {
+            if (checkInterval) {
+                clearInterval(checkInterval);
+                isChecking = false;
+                console.log('Processing complete, checks stopped'); // Debug log
+            }
+        });
+    });
+</script>
+
 </div>
