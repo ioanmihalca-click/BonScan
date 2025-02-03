@@ -45,7 +45,7 @@ new class extends Component {
                         'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' => !request()->routeIs(
                             'dashboard'),
                     ])>
-                        Dashboard
+                        Bonuri
                     </a>
                     <a href="/situatie-centralizatoare" wire:navigate @class([
                         'inline-flex items-center px-1 pt-1 text-sm font-medium border-b-2',
@@ -55,7 +55,7 @@ new class extends Component {
                             'situatie-centralizatoare*'),
                     ])>
                         Situații
-                    </a>
+                    {{-- </a>
                     <a href="/bonuri" wire:navigate @class([
                         'inline-flex items-center px-1 pt-1 text-sm font-medium border-b-2',
                         'border-indigo-500 text-gray-900' => request()->routeIs('bonuri*'),
@@ -63,7 +63,7 @@ new class extends Component {
                             'bonuri*'),
                     ])>
                         Bonuri
-                    </a>
+                    </a> --}}
                 </div>
             </div>
 
@@ -114,7 +114,7 @@ new class extends Component {
                 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800' => !request()->routeIs(
                     'dashboard'),
             ])>
-                Dashboard
+                Bonuri
             </a>
             <a href="/situatie-centralizatoare" wire:navigate @class([
                 'block py-2 pl-3 pr-4 text-base font-medium border-l-4',
@@ -125,7 +125,7 @@ new class extends Component {
             ])>
                 Situații
             </a>
-            <a href="/bonuri" wire:navigate @class([
+            {{-- <a href="/bonuri" wire:navigate @class([
                 'block py-2 pl-3 pr-4 text-base font-medium border-l-4',
                 'border-indigo-500 text-indigo-700 bg-indigo-50' => request()->routeIs(
                     'bonuri*'),
@@ -133,7 +133,7 @@ new class extends Component {
                     'bonuri*'),
             ])>
                 Bonuri
-            </a>
+            </a> --}}
 
             <!-- Mobile Profile Info -->
             <div class="pt-4 pb-1 border-t border-gray-200">

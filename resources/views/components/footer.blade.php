@@ -12,15 +12,12 @@
         <p class="text-sm text-gray-500">
             Pentru a menține și dezvolta această platformă avem nevoie de sprijinul dumneavoastră. Costurile de
             întreținere a serverelor și ale modelelor AI sunt semnificative. Dacă doriți să susțineți dezvoltarea
-            acestui proiect și a altor aplicații similare, puteți face o donație la:
+            acestui proiect și a altor aplicații similare, puteți face o donație pe Revolut @clickstudios
         </p>
 
        <div class="flex flex-col items-center p-4 mt-4 space-y-2 rounded-lg bg-indigo-50">
-    <div>
-        <span class="font-medium text-indigo-700">Revolut: </span>
-        <span class="text-indigo-600">@clickstudios</span>
-    </div>
-    
+
+
     <div class="flex gap-2">
         <!-- Buton pentru Mobile -->
         <a href="https://revolut.me/clickstudios" 

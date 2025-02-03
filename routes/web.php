@@ -16,7 +16,7 @@ Route::middleware(['auth'])->group(function () {
     })->name('bonuri.edit');
     Route::get('/situatie-centralizatoare', SituatiiCentralizatoare::class)
         ->name('situatie-centralizatoare');
-    Route::get('/bonuri', ListaBonuri::class)->name('bonuri.index');
+    // Route::get('/bonuri', ListaBonuri::class)->name('bonuri.index');
     
 Route::view('profile', 'profile')->name('profile');
 });

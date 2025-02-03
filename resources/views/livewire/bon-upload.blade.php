@@ -12,7 +12,7 @@
                 <div class="p-4 mt-2 rounded-md bg-blue-50">
                     <p class="font-medium text-blue-800">Recomandări importante:</p>
                     <ul class="mt-2 ml-4 text-blue-700 list-disc">
-                        <li>Faceți poze clare bonurilor, asigurându-vă că textul este lizibil</li>
+                        <li>Faceți poze clare bonurilor, asigurându-vă că textul este vizibil</li>
                         <li>Evitați umbrele sau reflexiile pe bon</li>
                         <li>Încărcați maxim 10 bonuri odată pentru procesare optimă</li>
                         <li>Timpul de procesare variază între 10-30 secunde per bon</li>
@@ -158,6 +158,8 @@
             </div>
         @endforeach
     @endif
+
+    <livewire:lista-bonuri />
 
 <script>
     document.addEventListener('livewire:initialized', () => {

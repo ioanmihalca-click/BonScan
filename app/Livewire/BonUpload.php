@@ -26,6 +26,8 @@ class BonUpload extends Component
     public $processingJobs = [];
     public $completedJobs = 0;
     public $totalJobs = 0;
+    public $showEditModal = false;
+    public $selectedBonId = null;
 
     protected $listeners = [
         'rezultatUpdated' => 'onRezultatUpdated',
@@ -39,7 +41,6 @@ class BonUpload extends Component
             $this->showEdit = true;
         }
         
-        // Inițializăm ascultarea pentru procesare
         $this->dispatch('startProcessingCheck');
     }
 
@@ -76,10 +77,8 @@ class BonUpload extends Component
         }
 
         $this->processing = false;
-        // Forțăm un refresh imediat
         $this->dispatch('checkProcessingStatus');
     }
-
 
     public function updatedBonuri($value)
     {
@@ -109,20 +108,33 @@ class BonUpload extends Component
         $this->completedJobs = $completedCount;
 
         if ($this->completedJobs === $this->totalJobs) {
-            $this->redirect('/bonuri');
+            $this->processingComplete = true;
+            $this->dispatch('processingComplete');
+            $this->dispatch('bonuriUpdated');  // Acest dispatch va actualiza lista
+                    
+            // Reset states after processing
+            $this->bonuri = [];
+            $this->processingJobs = [];
+            $this->totalJobs = 0;
+            $this->completedJobs = 0;
+            $this->message = 'Toate bonurile au fost procesate cu succes!';
         }
 
-        // Forțăm refresh-ul componentei
         $this->dispatch('$refresh');
     }
 
-
+    public function editBon($bonId)
+    {
+        $this->selectedBonId = $bonId;
+        $this->showEditModal = true;
+    }
 
     public function onRezultatUpdated()
     {
         if ($this->currentBonId) {
             $this->rezultateOcr = RezultatOcr::where('bon_id', $this->currentBonId)->first();
         }
+        $this->dispatch('bonuriUpdated');  
     }
 
     public function getProgress()

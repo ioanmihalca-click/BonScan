@@ -3,16 +3,16 @@
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div class="flex-1 min-w-0">
             <h1 class="text-xl font-semibold text-gray-900">Bonuri Fiscale</h1>
-            <p class="mt-2 text-sm text-gray-700">Lista tuturor bonurilor scanate și procesate</p>
+            <p class="mt-2 text-sm text-gray-700">Lista tuturor bonurilor scanate și procesate. Verifica si daca e nevoie editeaza datele extrase din bon.</p>
         </div>
-        <div class="mt-4 sm:mt-0">
+        {{-- <div class="mt-4 sm:mt-0">
             <a href="/dashboard" class="inline-flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm sm:w-auto hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                 </svg>
                 Adaugă Bon Nou
             </a>
-        </div>
+        </div> --}}
     </div>
 
     <!-- Table pentru Desktop / Cards pentru Mobile -->
@@ -192,7 +192,7 @@
         <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" aria-hidden="true"></div>
         <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
         
-        <div class="inline-block w-full overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+        <div class="inline-block w-full overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
             <div class="absolute top-0 right-0 pt-4 pr-4">
                 <button wire:click="$set('showEditModal', false)" type="button" 
                     class="text-gray-400 bg-white rounded-md hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500">

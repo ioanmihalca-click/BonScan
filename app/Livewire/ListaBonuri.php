@@ -15,7 +15,11 @@ class ListaBonuri extends Component
     public $selectedBonId;
     public $showEditModal = false;
 
-    protected $listeners = ['rezultatUpdated' => '$refresh'];
+  
+    protected $listeners = [
+        'rezultatUpdated' => '$refresh',
+        'bonuriUpdated' => '$refresh'  
+    ];
 
     public function confirmDelete($bonId)
     {
