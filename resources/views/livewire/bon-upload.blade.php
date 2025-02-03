@@ -34,7 +34,7 @@
                                     <span class="text-gray-500"> - {{ count($bonuri) }} bonuri selectate</span>
                                 @endif
                             </p>
-                            <p class="mt-1 text-xs text-gray-500">JPG, PNG până la 2MB per bon</p>
+                            <p class="mt-1 text-xs text-gray-500">JPG, PNG până la 5MB per bon</p>
                         </div>
                         <input type="file" wire:model="bonuri" accept="image/*" class="hidden" multiple>
                     </label>

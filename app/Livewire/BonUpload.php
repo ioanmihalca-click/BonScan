@@ -81,7 +81,7 @@ class BonUpload extends Component
     {
         if ($value) {
             $this->validate([
-                'bonuri.*' => 'image|max:2048'
+                'bonuri.*' => 'image|max:5120'  // 5MB în kilobytes
             ]);
         }
     }
