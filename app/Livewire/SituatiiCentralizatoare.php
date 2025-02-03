@@ -101,6 +101,25 @@ class SituatiiCentralizatoare extends Component
         }
     }
 
+    public function deleteSituatie($situatieId)
+    {
+        try {
+            $situatie = SituatieCentralizatoare::where('user_id', Auth::id())
+                ->findOrFail($situatieId);
+
+            // Detașăm bonurile și ștergem situația
+            $situatie->bonuri()->detach();
+            $situatie->delete();
+
+            session()->flash('success', 'Situația a fost ștearsă cu succes.');
+            $this->reset(['situatieCurenta', 'showBonManagement']);
+            $this->loadSituatii();
+        } catch (\Exception $e) {
+            Log::error('Eroare la ștergerea situației: ' . $e->getMessage());
+            session()->flash('error', 'A apărut o eroare la ștergerea situației.');
+        }
+    }
+
     public function exportPDF($situatieId)
     {
         $situatie = SituatieCentralizatoare::where('user_id', Auth::id())
