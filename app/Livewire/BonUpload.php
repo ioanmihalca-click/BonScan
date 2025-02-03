@@ -44,7 +44,7 @@ class BonUpload extends Component
     
             foreach ($this->bonuri as $bon) {
                 // Salvăm bonul cu user_id
-                $path = $bon->store('bonuri', 'public');
+                $path = $ocrService->optimizeAndStore($bon);
                 $bonModel = Bon::create([
                     'imagine_path' => $path,
                     'status' => 'processing',

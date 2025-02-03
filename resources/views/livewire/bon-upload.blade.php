@@ -7,7 +7,9 @@
             
             <div class="mt-2 text-sm text-gray-500">
                 <p>Încarcă unul sau mai multe bonuri fiscale pentru procesare automată. Sunt acceptate imagini în format JPG, PNG.</p>
+                <p class="mt-1 text-indigo-600">Important: Procesarea bonurilor poate dura între 30 de secunde și câteva minute, în funcție de numărul de bonuri. Vă rugăm să așteptați.</p>
             </div>
+
 
             <form wire:submit="save">
                 @if ($message)

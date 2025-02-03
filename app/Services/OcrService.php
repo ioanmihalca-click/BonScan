@@ -21,31 +21,61 @@ class OcrService
     private function optimizeImage($imagePath)
     {
         $img = $this->imageManager->read($imagePath);
-        
+
         // Optimizări pentru text mai clar
         $img->contrast(20)
             ->brightness(10)
             ->greyscale();
-        
-        // Redimensionăm păstrând rezoluția bună
-        $img->scale(width: 2000);
-        
-        // Salvăm temporar
+
+        // Redimensionăm la o dimensiune mai mică dar suficientă pentru OCR
+        // De obicei, 1000px lățime e suficientă pentru bonuri
+        $img->scale(width: 1000);
+
+        // Salvăm temporar cu o calitate mai mică (75% în loc de 95%)
+       
         $tempPath = storage_path('app/temp_' . basename($imagePath));
-        $img->save($tempPath, quality: 95);
-        
+
+        // Compresie mai agresivă pentru JPG
+        if (
+            strtolower(pathinfo($imagePath, PATHINFO_EXTENSION)) === 'jpg' ||
+            strtolower(pathinfo($imagePath, PATHINFO_EXTENSION)) === 'jpeg'
+        ) {
+            $img->save($tempPath, quality: 75, format: 'jpg');
+        } else {
+            $img->save($tempPath, quality: 75);
+        }
+
         return $tempPath;
     }
-    
+
+    public function optimizeAndStore($uploadedFile)
+    {
+        $img = $this->imageManager->read($uploadedFile);
+
+        // Redimensionăm direct la upload
+        $img->scale(width: 1000)
+            ->greyscale();
+
+        // Generăm un nume unic pentru fișier
+        $fileName = 'bon_' . uniqid() . '.jpg';
+        $path = 'bonuri/' . $fileName;
+
+        // Salvăm direct în storage cu compresie
+        $storagePath = storage_path('app/public/' . $path);
+        $img->save($storagePath, quality: 75, format: 'jpg');
+
+        return $path;
+    }
+
     public function process(Bon $bon)
     {
         try {
             $imagePath = storage_path('app/public/' . $bon->imagine_path);
             $optimizedImagePath = $this->optimizeImage($imagePath);
-            
+
             // Convertim imaginea în base64
             $imageBase64 = base64_encode(file_get_contents($optimizedImagePath));
-    
+
             // Construim promptul pentru Claude
             $prompt = "Analizează acest bon fiscal și extrage următoarele informații în format JSON:
                 - furnizor: numele companiei (S.C. ... S.R.L.)
@@ -54,7 +84,7 @@ class OcrService
                 - cantitate_facturata: cantitatea de motorină în litri (al doilea număr din formatul 'preț x cantitate', de exemplu din '7,33 x 20.48' extrage 20.48)
                 
                 Răspunde doar cu JSON-ul, fără alte explicații.";
-    
+
             $response = Anthropic::messages()->create([
                 'model' => 'claude-3-5-sonnet-20241022',
                 'max_tokens' => 1024,
@@ -85,7 +115,7 @@ class OcrService
 
             $content = $response['content'][0]['text'];
             $extractedData = json_decode($content, true);
-            
+
             if (json_last_error() !== JSON_ERROR_NONE) {
                 throw new \Exception('Eroare la decodarea JSON: ' . json_last_error_msg());
             }
@@ -106,7 +136,6 @@ class OcrService
                 'cantitate_utilizata' => $extractedData['cantitate_facturata'] ?? 0,
                 'raw_data' => json_encode($extractedData)
             ]);
-
         } catch (\Exception $e) {
             Log::error('Claude OCR Error:', [
                 'error' => $e->getMessage(),
