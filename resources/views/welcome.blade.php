@@ -38,7 +38,6 @@
         <div
             class="relative flex flex-col items-center justify-center min-h-screen selection:bg-indigo-500 selection:text-white">
             <div class="relative w-full max-w-2xl px-6 lg:max-w-7xl">
-            
                 <main class="mt-1">
                     <div class="flex flex-col items-center justify-center px-6 py-12 text-center">
                         <h1 class="text-3xl font-bold text-gray-900 sm:text-4xl md:text-5xl lg:text-6xl">
