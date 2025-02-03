@@ -15,7 +15,7 @@
                         <li>Faceți poze clare bonurilor, asigurându-vă că textul este lizibil</li>
                         <li>Evitați umbrele sau reflexiile pe bon</li>
                         <li>Încărcați maxim 10 bonuri odată pentru procesare optimă</li>
-                        <li>Timpul de procesare variază între 15-30 secunde per bon</li>
+                        <li>Timpul de procesare variază între 10-30 secunde per bon</li>
                         <li>Nu închideți fereastra în timpul procesării</li>
                     </ul>
                 </div>
