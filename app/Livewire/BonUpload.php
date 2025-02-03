@@ -35,7 +35,7 @@ class BonUpload extends Component
     public function save(OcrService $ocrService)
     {
         $this->validate([
-            'bonuri.*' => 'required|image|max:2048'
+            'bonuri.*' => 'required|image|max:5120' 
         ]);
     
         try {
@@ -81,7 +81,7 @@ class BonUpload extends Component
     {
         if ($value) {
             $this->validate([
-                'bonuri.*' => 'image|max:5120'  // 5MB în kilobytes
+                'bonuri.*' => 'image|max:5120'  
             ]);
         }
     }
