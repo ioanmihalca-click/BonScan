@@ -38,24 +38,34 @@
 
 <body class="font-sans antialiased">
     <div class="bg-gray-50 text-black/50">
-    
-        <!-- Nav Header -->
+
         <nav class="bg-white shadow-sm">
             <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between h-16">
-                    <div class="flex items-center gap-2">
-                        <img src="{{ asset('assets/logo.webp') }}" alt="BonScan Logo" class="w-8 h-8">
-                        <span class="text-xl font-bold text-indigo-600">BonScan</span>
+                <!-- Container principal cu padding ajustat pentru mobile -->
+                <div class="relative flex items-center justify-between h-16">
+                    <!-- Logo și text - ajustat pentru spacing consistent -->
+                    <div class="flex items-center gap-2 shrink-0">
+                        <img src="{{ asset('assets/logo.webp') }}" alt="BonScan Logo" class="w-8 h-8 md:w-10 md:h-10">
+                        <span class="text-lg font-bold text-indigo-600 md:text-xl">BonScan</span>
                     </div>
-                    <div class="flex items-center gap-4">
-                        <a href="{{ route('login') }}" class="text-gray-600 hover:text-indigo-600">Autentificare</a>
-                        <a href="{{ route('register') }}" class="px-4 py-2 text-white bg-indigo-600 rounded-md hover:bg-indigo-700">Înregistrare</a>
+
+                    <!-- Butoane autentificare/înregistrare - responsive cu spacing optimizat -->
+                    <div class="flex items-center gap-2 sm:gap-4">
+                        <a href="{{ route('login') }}"
+                            class="px-2 py-1 text-sm text-gray-600 transition-colors duration-200 sm:px-3 sm:py-2 md:text-base hover:text-indigo-600">
+                            Autentificare
+                        </a>
+                        <a href="{{ route('register') }}"
+                            class="px-3 py-1.5 text-sm font-medium text-white transition-colors duration-200 bg-indigo-600 rounded-md sm:px-4 sm:py-2 md:text-base hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Înregistrare
+                        </a>
                     </div>
                 </div>
             </div>
         </nav>
 
-        <div class="relative flex flex-col items-center justify-center min-h-screen selection:bg-indigo-500 selection:text-white">
+        <div
+            class="relative flex flex-col items-center justify-center min-h-screen selection:bg-indigo-500 selection:text-white">
             <div class="relative w-full max-w-2xl px-6 lg:max-w-7xl">
                 <main class="mt-1">
                     <div class="flex flex-col items-center justify-center px-6 py-12 text-center">
