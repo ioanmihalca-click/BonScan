@@ -28,6 +28,7 @@ class BonUpload extends Component
     public $totalJobs = 0;
     public $showEditModal = false;
     public $selectedBonId = null;
+    public $isUploading = false;
 
     protected $listeners = [
         'rezultatUpdated' => 'onRezultatUpdated',
@@ -85,14 +86,18 @@ class BonUpload extends Component
     $this->processing = false;
 }
 
-    public function updatedBonuri($value)
-    {
-        if ($value) {
-            $this->validate([
-                'bonuri.*' => 'image|max:5120'
-            ]);
-        }
+public function updatedBonuri($value)
+{
+    $this->isUploading = true;
+    
+    if ($value) {
+        $this->validate([
+            'bonuri.*' => 'image|max:5120'
+        ]);
     }
+    
+    $this->isUploading = false;
+}
 
     public function checkProcessingStatus()
 {
