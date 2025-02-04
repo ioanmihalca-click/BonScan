@@ -32,7 +32,7 @@ class OcrService
         $img->scale(width: 1000);
 
         // Salvăm temporar cu o calitate mai mică (75% în loc de 95%)
-       
+
         $tempPath = storage_path('app/temp_' . basename($imagePath));
 
         // Compresie mai agresivă pentru JPG
@@ -79,7 +79,10 @@ class OcrService
             // Construim promptul pentru Claude
             $prompt = "Analizează acest bon fiscal și extrage următoarele informații în format JSON:
                 - furnizor: numele companiei (S.C. ... S.R.L.)
-                - numar_bon: numărul tranzacției (format XXXXXXX/X/XXXXXX/XXX care apare după 'NUMAR TRANZACTIE:')
+                - numar_bon: caută în această ordine:
+                    1. O linie care începe cu 'NUMAR BON:' sau 'Numar Bon:' și extrage numărul
+                    2. În partea de jos a bonului un număr format din 4-5 cifre urmat de '-' și încă 5 cifre (de exemplu: '2439-00846')
+                    3. Caută 'BF:' și extrage numărul care urmează după acesta (ex: din 'BF:0029' extrage '0029')
                 - data_bon: data în format DD/MM/YYYY
                 - cantitate_facturata: cantitatea de motorină în litri (al doilea număr din formatul 'preț x cantitate', de exemplu din '7,33 x 20.48' extrage 20.48)
                 
