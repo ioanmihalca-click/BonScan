@@ -31,7 +31,9 @@ class BonUpload extends Component
 
     protected $listeners = [
         'rezultatUpdated' => 'onRezultatUpdated',
-        'checkProcessingStatus' => 'checkProcessingStatus'
+        'checkProcessingStatus' => 'checkProcessingStatus',
+        'resetProcessingState' => 'resetProcessingState',
+        'startProcessingCheck' => 'checkProcessingStatus'
     ];
 
     public function mount()
@@ -45,40 +47,43 @@ class BonUpload extends Component
     }
 
     public function save(OcrService $ocrService)
-    {
-        $this->validate([
-            'bonuri.*' => 'required|image|max:5120'
-        ]);
+{
+    $this->validate([
+        'bonuri.*' => 'required|image|max:5120'
+    ]);
 
-        try {
-            $this->processing = true;
-            $this->rezultateOcr = [];
-            $this->completedJobs = 0;
-            $this->totalJobs = count($this->bonuri);
-            $this->processingJobs = [];
+    try {
+        // Reset states first
+        $this->resetProcessingState();
+        
+        // Initialize processing state
+        $this->processing = true;
+        $this->processingComplete = false;
+        $this->totalJobs = count($this->bonuri);
+        Log::info('Starting processing', ['totalJobs' => $this->totalJobs]);
 
-            foreach ($this->bonuri as $bon) {
-                $path = $ocrService->optimizeAndStore($bon);
-                $bonModel = Bon::create([
-                    'imagine_path' => $path,
-                    'status' => 'processing',
-                    'user_id' => Auth::id()
-                ]);
+        foreach ($this->bonuri as $bon) {
+            $path = $ocrService->optimizeAndStore($bon);
+            $bonModel = Bon::create([
+                'imagine_path' => $path,
+                'user_id' => Auth::id(),
+                'status' => 'processing'
+            ]);
 
-                $this->processingJobs[] = $bonModel->id;
-                ProcessBonOcr::dispatch($bonModel);
-            }
-
-            $this->message = 'Bonurile au fost încărcate și se procesează...';
-
-        } catch (\Exception $e) {
-            Log::error('Error processing bonuri:', ['error' => $e->getMessage()]);
-            $this->message = 'Eroare: ' . $e->getMessage();
+            $this->processingJobs[] = $bonModel->id;
+            ProcessBonOcr::dispatch($bonModel);
         }
 
-        $this->processing = false;
-        $this->dispatch('checkProcessingStatus');
+        $this->message = 'Bonurile au fost încărcate și se procesează...';
+        $this->dispatch('startProcessingCheck');
+
+    } catch (\Exception $e) {
+        Log::error('Error processing bonuri:', ['error' => $e->getMessage()]);
+        $this->message = 'Eroare: ' . $e->getMessage();
     }
+
+    $this->processing = false;
+}
 
     public function updatedBonuri($value)
     {
@@ -90,38 +95,45 @@ class BonUpload extends Component
     }
 
     public function checkProcessingStatus()
-    {
-        Log::info('Checking status', [
-            'processingJobs' => $this->processingJobs,
-            'totalJobs' => $this->totalJobs,
-            'completedJobs' => $this->completedJobs
-        ]);
-
-        if (empty($this->processingJobs) || $this->totalJobs === 0) {
-            return;
-        }
-
-        $completedCount = Bon::whereIn('id', $this->processingJobs)
-            ->where('status', 'completed')
-            ->count();
-
-        $this->completedJobs = $completedCount;
-
-        if ($this->completedJobs === $this->totalJobs) {
-            $this->processingComplete = true;
-            $this->dispatch('processingComplete');
-            $this->dispatch('bonuriUpdated');  // Acest dispatch va actualiza lista
-                    
-            // Reset states after processing
-            $this->bonuri = [];
-            $this->processingJobs = [];
-            $this->totalJobs = 0;
-            $this->completedJobs = 0;
-            $this->message = 'Toate bonurile au fost procesate cu succes!';
-        }
-
-        $this->dispatch('$refresh');
+{
+    if (empty($this->processingJobs)) {
+        Log::info('No processing jobs to check');
+        return;
     }
+
+    Log::info('Checking processing status', [
+        'jobs' => $this->processingJobs,
+        'completed' => $this->completedJobs,
+        'total' => $this->totalJobs
+    ]);
+
+    $completedCount = Bon::whereIn('id', $this->processingJobs)
+        ->where('status', 'completed')
+        ->count();
+
+    $this->completedJobs = $completedCount;
+
+    if ($this->completedJobs === $this->totalJobs) {
+        Log::info('Processing complete');
+        $this->processingComplete = true;
+        $this->dispatch('processingComplete');
+        $this->dispatch('bonuriUpdated');
+        $this->message = 'Toate bonurile au fost procesate cu succes!';
+        
+        // Clear uploaded files but keep processing state visible
+        $this->bonuri = [];
+    }
+}
+
+public function resetProcessingState()
+{
+    Log::info('Resetting processing state');
+    $this->processingJobs = [];
+    $this->totalJobs = 0;
+    $this->completedJobs = 0;
+    $this->processingComplete = false;
+    $this->processing = false;
+}
 
     public function editBon($bonId)
     {
