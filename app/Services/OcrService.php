@@ -79,7 +79,7 @@ class OcrService
             // Construim promptul pentru Claude
             $prompt = "Analizează acest bon fiscal și extrage următoarele informații în format JSON:
                 - furnizor: numele companiei (S.C. ... S.R.L.)
-                - numar_bon: numărul bonului fiscal
+                - numar_bon: numărul tranzacției (format XXXXXXX/X/XXXXXX/XXX care apare după 'NUMAR TRANZACTIE:')
                 - data_bon: data în format DD/MM/YYYY
                 - cantitate_facturata: cantitatea de motorină în litri (al doilea număr din formatul 'preț x cantitate', de exemplu din '7,33 x 20.48' extrage 20.48)
                 
